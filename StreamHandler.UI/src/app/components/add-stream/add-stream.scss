@@ -1,0 +1,86 @@
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 100;
+}
+
+.modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1e1e2e;
+  border: 1px solid #313150;
+  border-radius: 12px;
+  padding: 28px 32px;
+  width: 420px;
+  z-index: 101;
+
+  h2 { margin: 0 0 20px; font-size: 18px; color: #e2e8f0; }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #94a3b8;
+
+    .required { color: #ef4444; }
+    .optional  { color: #555; }
+
+    input {
+      background: #0f0f1a;
+      border: 1px solid #313150;
+      border-radius: 6px;
+      padding: 9px 12px;
+      color: #e2e8f0;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus { border-color: #7c3aed; }
+    }
+  }
+
+  .error {
+    background: #2d1b1b;
+    border: 1px solid #7f1d1d;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #fca5a5;
+    margin-bottom: 16px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+  }
+}
+
+button {
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.2s;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &.btn-cancel {
+    background: #1a1a2e;
+    border: 1px solid #313150;
+    color: #94a3b8;
+  }
+
+  &.btn-add {
+    background: #7c3aed;
+    color: #fff;
+
+    &:hover:not(:disabled) { background: #6d28d9; }
+  }
+}

@@ -1,0 +1,55 @@
+.status-card {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 20px 24px;
+  background: #1e1e2e;
+  border-radius: 12px;
+  margin-bottom: 8px;
+
+  &.loading { color: #888; font-style: italic; }
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .value { font-size: 28px; font-weight: 700; line-height: 1; }
+  .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+  &.live   .dot { background: #22c55e; box-shadow: 0 0 8px #22c55e88; }
+  &.offline .dot { background: #ef4444; }
+  &.checking .dot { background: #f59e0b; animation: pulse 1.2s infinite; }
+  &.unknown .dot { background: #6b7280; }
+  &.total .value { color: #a78bfa; }
+}
+
+.last-check {
+  font-size: 12px;
+  color: #555;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+.signalr-badge {
+  display: inline-block;
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 6px;
+  padding-left: 4px;
+
+  &.online { color: #22c55e; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}

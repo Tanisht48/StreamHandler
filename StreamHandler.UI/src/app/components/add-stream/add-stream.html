@@ -1,0 +1,25 @@
+<div class="modal-backdrop" (click)="cancelled.emit()"></div>
+<div class="modal">
+  <h2>Add Stream</h2>
+
+  <label>
+    Stream URL <span class="required">*</span>
+    <input [(ngModel)]="url" placeholder="http://... or rtsp://..." autofocus />
+  </label>
+
+  <label>
+    Name <span class="optional">(optional)</span>
+    <input [(ngModel)]="name" placeholder="e.g. BBC World Service" />
+  </label>
+
+  @if (error()) {
+    <div class="error">{{ error() }}</div>
+  }
+
+  <div class="actions">
+    <button class="btn-cancel" (click)="cancelled.emit()" [disabled]="saving()">Cancel</button>
+    <button class="btn-add" (click)="submit()" [disabled]="saving()">
+      {{ saving() ? 'Adding…' : 'Add Stream' }}
+    </button>
+  </div>
+</div>

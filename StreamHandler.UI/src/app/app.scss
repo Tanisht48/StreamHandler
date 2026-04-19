@@ -1,0 +1,55 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: #0f0f1a;
+  border-bottom: 1px solid #1e1e35;
+
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .icon {
+      color: #7c3aed;
+      font-size: 20px;
+    }
+  }
+
+  .hangfire-link {
+    font-size: 13px;
+    color: #64748b;
+    text-decoration: none;
+
+    &:hover { color: #a78bfa; }
+  }
+}
+
+main {
+  flex: 1;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #13131f;
+  border: 1px solid #1e1e35;
+  border-radius: 12px;
+  padding: 24px;
+}

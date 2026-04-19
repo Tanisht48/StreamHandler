@@ -1,0 +1,66 @@
+# ─── .NET ───────────────────────────────────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+.vs/
+*.ncrunch*
+*.DotSettings.user
+TestResults/
+*.trx
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# EF Migrations bundle (generated binary)
+efbundle
+efbundle.exe
+
+# Published output
+publish/
+out/
+
+# ─── Angular / Node ──────────────────────────────────────────────────────────
+node_modules/
+dist/
+.angular/
+.sass-cache/
+*.js.map
+*.css.map
+
+# ─── Environment / secrets ───────────────────────────────────────────────────
+appsettings.Development.json
+appsettings.*.local.json
+.env
+.env.*
+!.env.example
+
+# ─── IDE ─────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ─── Claude Code ─────────────────────────────────────────────────────────────
+.claude/
+SESSION_NOTES.md
+
+# ─── OS ──────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Root-level Angular CLI shim (not needed in repo) ────────────────────────
+/package-lock.json

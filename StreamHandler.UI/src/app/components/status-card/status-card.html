@@ -1,0 +1,49 @@
+@if (summary()) {
+  <div class="status-card">
+    <div class="stat live">
+      <span class="dot"></span>
+      <div>
+        <div class="value">{{ summary()!.live }}</div>
+        <div class="label">Live</div>
+      </div>
+    </div>
+    <div class="stat offline">
+      <span class="dot"></span>
+      <div>
+        <div class="value">{{ summary()!.offline }}</div>
+        <div class="label">Offline</div>
+      </div>
+    </div>
+    <div class="stat checking">
+      <span class="dot"></span>
+      <div>
+        <div class="value">{{ summary()!.checking }}</div>
+        <div class="label">Checking</div>
+      </div>
+    </div>
+    <div class="stat unknown">
+      <span class="dot"></span>
+      <div>
+        <div class="value">{{ summary()!.unknown }}</div>
+        <div class="label">Unknown</div>
+      </div>
+    </div>
+    <div class="stat total">
+      <div>
+        <div class="value">{{ summary()!.totalStreams }}</div>
+        <div class="label">Total</div>
+      </div>
+    </div>
+  </div>
+  @if (summary()!.lastHealthCheckRanAt) {
+    <div class="last-check">
+      Last check: {{ summary()!.lastHealthCheckRanAt | date:'HH:mm:ss' }} UTC
+    </div>
+  }
+} @else {
+  <div class="status-card loading">Loading status...</div>
+}
+
+<div class="signalr-badge" [class.online]="connected()">
+  {{ connected() ? '● Live updates on' : '○ Connecting...' }}
+</div>

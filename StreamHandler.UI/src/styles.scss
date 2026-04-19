@@ -1,0 +1,11 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: #0a0a14;
+  color: #cbd5e1;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }

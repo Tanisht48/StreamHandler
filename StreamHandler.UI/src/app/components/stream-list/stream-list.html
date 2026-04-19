@@ -1,0 +1,60 @@
+<div class="list-header">
+  <h2>Streams</h2>
+  <button class="btn-add-stream" (click)="showAddModal.set(true)">+ Add Stream</button>
+</div>
+
+@if (streams().length === 0) {
+  <div class="empty">No streams yet. Click "Add Stream" to get started.</div>
+} @else {
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Name</th>
+          <th>Format</th>
+          <th>URL</th>
+          <th>Last Checked</th>
+          <th>Last Live</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (stream of streams(); track stream.id) {
+          <tr [class]="'row-' + stream.status.toLowerCase()">
+            <td>
+              <span class="badge" [class]="'badge-' + stream.status.toLowerCase()">
+                @if (stream.status === 'Checking' || isChecking(stream.id)) {
+                  <span class="spinner"></span>
+                }
+                {{ stream.status }}
+              </span>
+            </td>
+            <td class="name">{{ stream.name }}</td>
+            <td><span class="format-badge">{{ stream.format }}</span></td>
+            <td class="url">
+              <a [href]="stream.url" target="_blank" rel="noopener">{{ stream.url }}</a>
+            </td>
+            <td class="time">{{ stream.lastCheckedAt | date:'HH:mm:ss' }}</td>
+            <td class="time">{{ stream.lastSeenLiveAt ? (stream.lastSeenLiveAt | date:'HH:mm:ss') : '—' }}</td>
+            <td class="actions">
+              <button class="btn-check" (click)="triggerCheck(stream)" [disabled]="isChecking(stream.id)" title="Run health check">
+                ↺
+              </button>
+              <button class="btn-delete" (click)="deleteStream(stream)" title="Remove stream">
+                ✕
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (showAddModal()) {
+  <app-add-stream
+    (streamAdded)="onStreamAdded($event)"
+    (cancelled)="showAddModal.set(false)">
+  </app-add-stream>
+}
