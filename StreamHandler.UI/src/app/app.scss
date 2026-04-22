@@ -26,6 +26,11 @@ header {
     }
   }
 
+  .header-links {
+    display: flex;
+    gap: 16px;
+  }
+
   .hangfire-link {
     font-size: 13px;
     color: #64748b;

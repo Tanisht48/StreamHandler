@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy, signal } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { Stream, StatusSummary } from '../models/stream.model';
+import { Stream, StatusSummary, StreamAlert } from '../models/stream.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SignalRService implements OnDestroy {
@@ -8,13 +9,13 @@ export class SignalRService implements OnDestroy {
 
   readonly connected = signal(false);
 
-  // Emitters — components subscribe via effect() or toObservable()
   private streamUpdateHandlers: ((s: Stream) => void)[] = [];
   private summaryUpdateHandlers: ((s: StatusSummary) => void)[] = [];
+  private alertHandlers: ((a: StreamAlert) => void)[] = [];
 
   constructor() {
     this.hub = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/hubs/stream-status')
+      .withUrl(environment.hubUrl)
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Warning)
       .build();
@@ -25,6 +26,10 @@ export class SignalRService implements OnDestroy {
 
     this.hub.on('StatusSummaryUpdated', (summary: StatusSummary) => {
       this.summaryUpdateHandlers.forEach(h => h(summary));
+    });
+
+    this.hub.on('StreamAlert', (alert: StreamAlert) => {
+      this.alertHandlers.forEach(h => h(alert));
     });
 
     this.hub.onreconnected(() => this.connected.set(true));
@@ -39,7 +44,6 @@ export class SignalRService implements OnDestroy {
       await this.hub.start();
       this.connected.set(true);
     } catch {
-      // Retry after 5s if API isn't up yet
       setTimeout(() => this.start(), 5000);
     }
   }
@@ -52,6 +56,11 @@ export class SignalRService implements OnDestroy {
   onSummaryUpdate(handler: (s: StatusSummary) => void): () => void {
     this.summaryUpdateHandlers.push(handler);
     return () => { this.summaryUpdateHandlers = this.summaryUpdateHandlers.filter(h => h !== handler); };
+  }
+
+  onAlert(handler: (a: StreamAlert) => void): () => void {
+    this.alertHandlers.push(handler);
+    return () => { this.alertHandlers = this.alertHandlers.filter(h => h !== handler); };
   }
 
   ngOnDestroy() {

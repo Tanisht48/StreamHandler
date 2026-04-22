@@ -1,0 +1,9 @@
+<div class="toast-container">
+  @for (toast of toasts(); track toast.id) {
+    <div class="toast" [class]="'toast-' + toast.type" (click)="dismiss(toast.id)">
+      <span class="toast-icon">{{ toast.type === 'offline' ? '🔴' : '🟢' }}</span>
+      <span class="toast-msg">{{ toast.message }}</span>
+      <button class="toast-close" (click)="dismiss(toast.id)">✕</button>
+    </div>
+  }
+</div>

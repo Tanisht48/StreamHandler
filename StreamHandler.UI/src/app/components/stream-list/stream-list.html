@@ -1,10 +1,24 @@
 <div class="list-header">
   <h2>Streams</h2>
-  <button class="btn-add-stream" (click)="showAddModal.set(true)">+ Add Stream</button>
+  <div class="list-controls">
+    @if (allTags().length > 0) {
+      <div class="tag-filter">
+        <select [(ngModel)]="tagFilter" [ngModel]="tagFilter()" (ngModelChange)="tagFilter.set($event)">
+          <option value="">All tags</option>
+          @for (tag of allTags(); track tag) {
+            <option [value]="tag">{{ tag }}</option>
+          }
+        </select>
+      </div>
+    }
+    <button class="btn-add-stream" (click)="showAddModal.set(true)">+ Add Stream</button>
+  </div>
 </div>
 
-@if (streams().length === 0) {
-  <div class="empty">No streams yet. Click "Add Stream" to get started.</div>
+@if (filteredStreams().length === 0) {
+  <div class="empty">
+    {{ streams().length === 0 ? 'No streams yet. Click "Add Stream" to get started.' : 'No streams match this tag filter.' }}
+  </div>
 } @else {
   <div class="table-wrap">
     <table>
@@ -13,6 +27,8 @@
           <th>Status</th>
           <th>Name</th>
           <th>Format</th>
+          <th>Tags</th>
+          <th>Metadata</th>
           <th>URL</th>
           <th>Last Checked</th>
           <th>Last Live</th>
@@ -20,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (stream of streams(); track stream.id) {
+        @for (stream of filteredStreams(); track stream.id) {
           <tr [class]="'row-' + stream.status.toLowerCase()">
             <td>
               <span class="badge" [class]="'badge-' + stream.status.toLowerCase()">
@@ -32,18 +48,32 @@
             </td>
             <td class="name">{{ stream.name }}</td>
             <td><span class="format-badge">{{ stream.format }}</span></td>
+            <td class="tags">
+              @for (tag of (stream.tags || '').split(','); track tag) {
+                @if (tag.trim()) {
+                  <span class="tag-chip">{{ tag.trim() }}</span>
+                }
+              }
+            </td>
+            <td class="meta">
+              @if (stream.codec || stream.resolution) {
+                <span class="meta-info">
+                  @if (stream.codec) { <span>{{ stream.codec }}</span> }
+                  @if (stream.resolution) { <span>{{ stream.resolution }}</span> }
+                  @if (stream.bitrateBps) { <span>{{ formatBitrate(stream.bitrateBps) }}</span> }
+                </span>
+              } @else {
+                <span class="dim">—</span>
+              }
+            </td>
             <td class="url">
               <a [href]="stream.url" target="_blank" rel="noopener">{{ stream.url }}</a>
             </td>
             <td class="time">{{ stream.lastCheckedAt | date:'HH:mm:ss' }}</td>
             <td class="time">{{ stream.lastSeenLiveAt ? (stream.lastSeenLiveAt | date:'HH:mm:ss') : '—' }}</td>
             <td class="actions">
-              <button class="btn-check" (click)="triggerCheck(stream)" [disabled]="isChecking(stream.id)" title="Run health check">
-                ↺
-              </button>
-              <button class="btn-delete" (click)="deleteStream(stream)" title="Remove stream">
-                ✕
-              </button>
+              <button class="btn-check" (click)="triggerCheck(stream)" [disabled]="isChecking(stream.id)" title="Run health check">↺</button>
+              <button class="btn-delete" (click)="deleteStream(stream)" title="Remove stream">✕</button>
             </td>
           </tr>
         }

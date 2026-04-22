@@ -26,13 +26,14 @@ public class StreamHealthJob
         _logger.LogInformation("StreamHealthJob started at {Time}", DateTime.UtcNow);
 
         var streamIds = _db.Streams.Select(s => s.Id).ToList();
+        _logger.LogInformation("Checking health for {Count} stream(s) in parallel.", streamIds.Count);
 
-        _logger.LogInformation("Checking health for {Count} stream(s).", streamIds.Count);
-
-        foreach (var id in streamIds)
+        // Run all checks in parallel, capped at 10 concurrent
+        var semaphore = new SemaphoreSlim(10);
+        var tasks = streamIds.Select(async id =>
         {
             cancellationToken.ThrowIfCancellationRequested();
-
+            await semaphore.WaitAsync();
             try
             {
                 await _healthService.CheckStreamHealthAsync(id);
@@ -41,7 +42,13 @@ public class StreamHealthJob
             {
                 _logger.LogError(ex, "Health check failed for stream {StreamId}", id);
             }
-        }
+            finally
+            {
+                semaphore.Release();
+            }
+        });
+
+        await Task.WhenAll(tasks);
 
         _logger.LogInformation("StreamHealthJob completed at {Time}", DateTime.UtcNow);
     }

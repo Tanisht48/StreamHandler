@@ -12,6 +12,11 @@
     <input [(ngModel)]="name" placeholder="e.g. BBC World Service" />
   </label>
 
+  <label>
+    Tags <span class="optional">(optional, comma-separated)</span>
+    <input [(ngModel)]="tags" placeholder="e.g. news, radio, uk" />
+  </label>
+
   @if (error()) {
     <div class="error">{{ error() }}</div>
   }
@@ -22,4 +27,6 @@
       {{ saving() ? 'Adding…' : 'Add Stream' }}
     </button>
   </div>
+
+  <div class="hint">Press Enter to submit · Esc to close</div>
 </div>

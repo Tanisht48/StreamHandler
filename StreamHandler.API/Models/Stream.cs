@@ -27,4 +27,25 @@ public class Stream
     public DateTime AddedAt { get; set; } = DateTime.UtcNow;
     public DateTime LastCheckedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastSeenLiveAt { get; set; }
+
+    // Tags (comma-separated)
+    public string Tags { get; set; } = string.Empty;
+
+    // Metadata from ffprobe
+    public string? Codec { get; set; }
+    public string? Resolution { get; set; }
+    public int? BitrateBps { get; set; }
+
+    public ICollection<StreamEvent> Events { get; set; } = [];
+}
+
+public class StreamEvent
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid StreamId { get; set; }
+    public StreamStatus OldStatus { get; set; }
+    public StreamStatus NewStatus { get; set; }
+    public DateTime OccurredAt { get; set; } = DateTime.UtcNow;
+
+    public Stream Stream { get; set; } = null!;
 }

@@ -1,0 +1,38 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: streamhandler
+      POSTGRES_USER: streamhandler
+      POSTGRES_PASSWORD: streamhandler
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streamhandler"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./StreamHandler.API
+    ports:
+      - "5000:5000"
+    environment:
+      ConnectionStrings__StreamHandlerDb: "Host=postgres;Port=5432;Database=streamhandler;Username=streamhandler;Password=streamhandler"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: ./StreamHandler.UI
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

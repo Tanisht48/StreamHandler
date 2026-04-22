@@ -31,6 +31,7 @@ public class StreamService
             Name = string.IsNullOrWhiteSpace(request.Name) ? request.Url : request.Name,
             Format = _formatDetector.Detect(request.Url),
             Status = StreamStatus.Unknown,
+            Tags = request.Tags ?? string.Empty,
             AddedAt = DateTime.UtcNow,
             LastCheckedAt = DateTime.UtcNow
         };

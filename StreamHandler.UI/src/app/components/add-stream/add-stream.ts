@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StreamService } from '../../services/stream.service';
@@ -19,24 +19,40 @@ export class AddStreamComponent {
 
   url = '';
   name = '';
+  tags = '';
   saving = signal(false);
   error = signal('');
+
+  @HostListener('document:keydown.escape')
+  onEsc() { if (!this.saving()) this.cancelled.emit(); }
+
+  @HostListener('document:keydown.enter', ['$event'])
+  onEnter(e: Event) {
+    if ((e.target as HTMLElement).tagName === 'BUTTON') return;
+    this.submit();
+  }
 
   submit() {
     if (!this.url.trim()) { this.error.set('URL is required'); return; }
     this.saving.set(true);
     this.error.set('');
 
-    this.streamService.addStream({ url: this.url.trim(), name: this.name.trim() || undefined })
-      .subscribe({
-        next: stream => {
-          this.saving.set(false);
-          this.streamAdded.emit(stream);
-        },
-        error: err => {
-          this.saving.set(false);
-          this.error.set(err?.error?.title ?? 'Failed to add stream');
-        }
-      });
+    this.streamService.addStream({
+      url: this.url.trim(),
+      name: this.name.trim() || undefined,
+      tags: this.tags.trim() || undefined
+    }).subscribe({
+      next: stream => {
+        this.saving.set(false);
+        this.url = '';
+        this.name = '';
+        this.tags = '';
+        this.streamAdded.emit(stream);
+      },
+      error: err => {
+        this.saving.set(false);
+        this.error.set(err?.error?.title ?? 'Failed to add stream');
+      }
+    });
   }
 }

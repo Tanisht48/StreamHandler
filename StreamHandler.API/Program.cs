@@ -1,6 +1,8 @@
 using Hangfire;
 using Hangfire.MemoryStorage;
+using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using StreamHandler.API.Data;
 using StreamHandler.API.Hubs;
 using StreamHandler.API.Jobs;
@@ -12,6 +14,18 @@ var builder = WebApplication.CreateBuilder(args);
 // ── Controllers ────────────────────────────────────────────────────────────
 builder.Services.AddControllers();
 
+// ── Swagger ────────────────────────────────────────────────────────────────
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title   = "StreamHandler API",
+        Version = "v1",
+        Description = "Live stream health monitoring API"
+    });
+});
+
 // ── CORS (allow Angular dev server) ───────────────────────────────────────
 builder.Services.AddCors(options =>
 {
@@ -19,7 +33,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:4200")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials()); // required for SignalR WebSockets
+              .AllowCredentials());
 });
 
 // ── SignalR ────────────────────────────────────────────────────────────────
@@ -52,9 +66,19 @@ builder.Services.AddScoped<StreamHealthService>();
 builder.Services.AddScoped<StreamService>();
 builder.Services.AddScoped<StreamHealthJob>();
 
-// ── Hangfire ──────────────────────────────────────────────────────────────
-builder.Services.AddHangfire(config => config.UseMemoryStorage());
-builder.Services.AddHangfireServer(options => { options.WorkerCount = 2; });
+// ── Hangfire: PostgreSQL if available, else memory ────────────────────────
+if (!string.IsNullOrWhiteSpace(connStr))
+{
+    builder.Services.AddHangfire(config =>
+        config.UsePostgreSqlStorage(o => o.UseNpgsqlConnection(connStr)));
+    Console.WriteLine("[Hangfire] Using PostgreSQL storage");
+}
+else
+{
+    builder.Services.AddHangfire(config => config.UseMemoryStorage());
+    Console.WriteLine("[Hangfire] Using in-memory storage");
+}
+builder.Services.AddHangfireServer(options => { options.WorkerCount = 4; });
 
 var app = builder.Build();
 
@@ -63,6 +87,10 @@ await InitializeDatabaseAsync(app);
 
 // ── Middleware pipeline ────────────────────────────────────────────────────
 app.UseCors("Angular");
+
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "StreamHandler API v1"));
+
 app.UseHangfireDashboard("/hangfire");
 app.MapControllers();
 app.MapHub<StreamStatusHub>("/hubs/stream-status");
@@ -95,7 +123,6 @@ static async Task InitializeDatabaseAsync(WebApplication app)
         await db.Database.EnsureCreatedAsync();
     }
 
-    // Seed only when the table is empty
     if (!db.Streams.Any())
         await SeedStreamsAsync(db, scope.ServiceProvider, logger);
 }
