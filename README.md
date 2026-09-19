@@ -10,11 +10,11 @@ A real-time stream health monitor. Add HTTP, HLS, RTSP, or YouTube stream URLs a
 StreamHandler/
 ├── StreamHandler.sln
 ├── StreamHandler.API/          ← .NET 8 Web API
-└── StreamHandler.UI/           ← Angular 19 standalone SPA
+└── StreamHandler.UI/           ← Angular 21 standalone SPA
 ```
 
 **Backend:** .NET 8 · ASP.NET Core · Entity Framework Core · Hangfire · SignalR · Npgsql  
-**Frontend:** Angular 19 · @microsoft/signalr  
+**Frontend:** Angular 21 · @microsoft/signalr  
 **Database:** In-memory (default) or PostgreSQL (opt-in)
 
 ---
